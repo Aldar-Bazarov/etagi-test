@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+// import { useParams } from 'react-router-dom'
 import { Card, Col, Empty, Row, Typography } from 'antd'
 
 type DataItem = {
@@ -27,7 +27,7 @@ const data: DataItem = {
 }
 
 export const Apartment = () => {
-    const { id } = useParams()
+    // const { id } = useParams()
     const [apartment, setApartment] = React.useState<DataItem>()
 
     React.useEffect(() => {

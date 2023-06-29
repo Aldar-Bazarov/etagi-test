@@ -1,7 +1,8 @@
 import React from 'react'
-import { useParams, Link } from 'react-router-dom';
-import { List, Select, Button, Modal, Space } from 'antd';
+import { Link } from 'react-router-dom';
+import { List, Select, Button, Space } from 'antd';
 import { Filter } from '../components/Filter';
+import { IFilters } from '../types/interfaces';
 
 type DataItem = {
     id: number;
@@ -16,6 +17,7 @@ type DataItem = {
 }
 
 const data: DataItem[] = [
+
     {
         id: 101,
         floor: 1,
@@ -105,12 +107,16 @@ const sortData = (option: string): DataItem[] => {
 };
 
 export const Floor: React.FC = () => {
-    const { id } = useParams()
-    const [sortedData, setSortedData] = React.useState<DataItem[]>(data)
-    const [sortOption, setSortOption] = React.useState<string>('')
+    // const { id } = useParams()
+    const [sortedAndFiltredData, setSortedAndFiltredData] = React.useState<DataItem[]>(data)
     const [open, setOpen] = React.useState<boolean>(false);
+    const [filter, setFilter] = React.useState<IFilters>({
+        rooms: [],
+        prices: [],
+        area: []
+    })
 
-    const apartments = sortedData.map((el, i) => ({
+    const apartments = sortedAndFiltredData.map((el, i) => ({
         href: `/apartment/${el.id}`,
         title: `Квартира №${el.id}`,
         description: 'Уютная просторная квартира в новом ЖК',
@@ -121,11 +127,30 @@ export const Floor: React.FC = () => {
     }));
 
     const handleSortChange = (value: string) => {
-        const selectedOption = value;
-        setSortOption(selectedOption);
-        const sortedData = sortData(selectedOption);
-        setSortedData(sortedData);
+        const sortedData = sortData(value);
+        setSortedAndFiltredData(sortedData);
     };
+
+    React.useEffect(() => {
+        const filterData = (): DataItem[] => {
+            return data.filter((item) => {
+                const roomMatch = filter.rooms.length === 0 || filter.rooms.includes(item.rooms);
+                const priceMatch =
+                    filter.prices.length === 0 ||
+                    (item.price >= filter.prices[0] &&
+                        item.price <= filter.prices[1]);
+                const areaMatch =
+                    filter.area.length === 0 ||
+                    (item.areaTotal >= filter.area[0] &&
+                        item.areaTotal <= filter.area[1]);
+
+                return roomMatch && priceMatch && areaMatch;
+            });
+        };
+
+        const filteredData = filterData();
+        setSortedAndFiltredData(filteredData);
+    }, [sortedAndFiltredData, filter]);
 
     return (
         <>
@@ -143,8 +168,15 @@ export const Floor: React.FC = () => {
                 <Button type="primary" onClick={() => setOpen(true)}>
                     Фильтрация
                 </Button>
+                <Button onClick={() => setFilter({
+                    rooms: [],
+                    prices: [],
+                    area: []
+                })}>
+                    Сбросить фильтры
+                </Button>
             </Space>
-            <Filter open={open} setOpen={setOpen} />
+            <Filter open={open} setOpen={setOpen} setFilter={setFilter} />
             <List
                 itemLayout="vertical"
                 size="large"
