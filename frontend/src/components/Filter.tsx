@@ -45,7 +45,7 @@ export const Filter: React.FC<FilterProps> = ({ open, setOpen, setFilter }) => {
             <Typography.Paragraph>Стоимость:</Typography.Paragraph>
             <Slider
                 range
-                min={0}
+                min={2880000}
                 max={6050000}
                 onChange={(values) => setPrices(values)}
             />

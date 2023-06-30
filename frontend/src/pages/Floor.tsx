@@ -155,6 +155,11 @@ export const Floor: React.FC = () => {
     return (
         <>
             <Space>
+                <Button type='dashed'>
+                    <Link to='/floor/plan'>
+                        План этажа
+                    </Link>
+                </Button>
                 <Select
                     placeholder='Cортировать по'
                     style={{ width: 200 }}
