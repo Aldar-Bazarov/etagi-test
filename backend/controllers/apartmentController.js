@@ -27,9 +27,9 @@ class ApartmentController {
                         pos_on_floor: data.pos_on_floor,
                         price: data.price,
                         rooms: data.rooms,
-                        area_total: data.area_total,
-                        area_kitchen: data.area_kitchen,
-                        area_live: data.area_live,
+                        area_total: +data.area_total.replace(/,/, '.'),
+                        area_kitchen: +data.area_kitchen.replace(/,/, '.'),
+                        area_live: +data.area_live.replace(/,/, '.'),
                         layout_image: data.layout_image
                     };
                     apartments.push(apartment);
@@ -54,6 +54,25 @@ class ApartmentController {
                 limit,
                 offset,
                 order: [['createdAt', 'DESC']]
+            });
+            res.status(200).json(apartments);
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    }
+
+    async getAllOnTheFloor(req, res) {
+        try {
+            let {page, limit, floorNumber} = req.query;
+            page = page || 1;
+            limit = limit || 3;
+            let offset = page * limit - limit;
+            const apartments = await Apartment.findAndCountAll({
+                limit,
+                offset,
+                order: [['createdAt', 'DESC']],
+                where: {floor: floorNumber}
             });
             res.status(200).json(apartments);
         } catch (err) {

@@ -1,37 +1,22 @@
 import React from 'react'
-// import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { Card, Col, Empty, Row, Typography } from 'antd'
-
-type DataItem = {
-    id: number;
-    floor: number;
-    posOnFloor: number;
-    price: number;
-    rooms: number;
-    areaTotal: number;
-    areaKitchen: number;
-    areaLive: number;
-    layoutImage: string;
-}
-
-const data: DataItem = {
-    id: 101,
-    floor: 1,
-    posOnFloor: 1,
-    price: 2880000,
-    rooms: 1,
-    areaTotal: 33.5,
-    areaKitchen: 11.4,
-    areaLive: 14.5,
-    layoutImage: 'https://cdn.esoft.digital/content/cluster/layouts_2d/d5/9e/e8b89005da2d08a8620db552c52022f08cbe9ed5.png',
-}
+import { ApartmentType } from '../types/types';
+import { getOneApartment } from '../api/apartment.api';
 
 export const Apartment = () => {
-    // const { id } = useParams()
-    const [apartment, setApartment] = React.useState<DataItem>()
+    const { id } = useParams()
+    const [apartment, setApartment] = React.useState<ApartmentType>()
+
+    const fetchData = async () => {
+        if (id) {
+            const { data } = await getOneApartment(+id)
+            setApartment(data)
+        }
+    }
 
     React.useEffect(() => {
-        setApartment(data);
+        fetchData();
     }, [])
 
     return (
@@ -45,9 +30,9 @@ export const Apartment = () => {
                 >
                     <Row>
                         <Col span={8}>
-                            <img src={apartment.layoutImage} alt="plan" style={{width: '100%'}}/>
+                            <img src={apartment.layout_image} alt="plan" style={{ width: '100%' }} />
                         </Col>
-                        <Col span={16} style={{padding: '3%'}}>
+                        <Col span={16} style={{ padding: '3%' }}>
                             <Typography.Paragraph strong>
                                 {`Этаж: ${apartment.floor}`}
                             </Typography.Paragraph>
@@ -58,13 +43,13 @@ export const Apartment = () => {
                                 {`Количество комнат: ${apartment.rooms}`}
                             </Typography.Paragraph>
                             <Typography.Paragraph strong>
-                                {`Общая площадь: ${apartment.areaTotal}`}
+                                {`Общая площадь: ${apartment.area_total}`}
                             </Typography.Paragraph>
                             <Typography.Paragraph strong>
-                                {`Площадь кухни: ${apartment.areaKitchen}`}
+                                {`Площадь кухни: ${apartment.area_kitchen}`}
                             </Typography.Paragraph>
                             <Typography.Paragraph strong>
-                                {`Жилая площадь: ${apartment.areaLive}`}
+                                {`Жилая площадь: ${apartment.area_live}`}
                             </Typography.Paragraph>
                         </Col>
                     </Row>
